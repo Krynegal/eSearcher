@@ -1,7 +1,10 @@
 package service
 
+import "eSearcher/internal/models"
+
 type VacancyService interface {
-	CreateVacancy(name, desc string) error
+	CreateVacancy(vacancy *models.Vacancy) error
+	SearchVacancy(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }
 
 type EmployeeService interface {
