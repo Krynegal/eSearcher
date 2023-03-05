@@ -7,14 +7,16 @@ type VacancyService interface {
 	SearchVacancy(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }
 
-type EmployeeService interface {
+type ApplicantsService interface {
+	Create(applicant *models.Applicant) error
 }
 
-type EmployerService interface {
+type SpecializationsService interface {
+	Get() ([]*models.Specialization, error)
 }
 
 type Services struct {
 	VacancyService
-	EmployeeService
-	EmployerService
+	ApplicantsService
+	SpecializationsService
 }

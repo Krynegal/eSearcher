@@ -7,14 +7,16 @@ type VacancyStorage interface {
 	Search(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }
 
-type EmployeeStorage interface {
+type ApplicantStorage interface {
+	Create(applicant *models.Applicant) (string, error)
 }
 
-type EmployerStorage interface {
+type SpecializationStorage interface {
+	Get() ([]*models.Specialization, error)
 }
 
 type Storage struct {
 	VacancyStorage
-	EmployeeStorage
-	EmployerStorage
+	ApplicantStorage
+	SpecializationStorage
 }

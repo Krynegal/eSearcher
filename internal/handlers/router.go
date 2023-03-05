@@ -11,6 +11,7 @@ type Router struct {
 	*mux.Router
 	Services   *service.Services
 	GoogleAuth *GoogleAuth
+	//RateLimiter redis.RateLimiter
 }
 
 func NewRouter(cfg *configs.Config, services *service.Services) *Router {
@@ -18,6 +19,7 @@ func NewRouter(cfg *configs.Config, services *service.Services) *Router {
 		Router:     mux.NewRouter(),
 		Services:   services,
 		GoogleAuth: NewGoogleAuth(cfg),
+		//RateLimiter: rateLimiter,
 	}
 	router.InitRoutes()
 	return router
@@ -30,4 +32,6 @@ func (r *Router) InitRoutes() {
 
 	r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
+
+	r.Router.HandleFunc("/api/applicant/create", r.CreateApplicant).Methods(http.MethodPost)
 }

@@ -23,15 +23,9 @@ func NewVacancyCollection(database *mongo.Database, collection string) *VacancyC
 
 func (vc *VacancyCollection) Create(vacancy *models.Vacancy) (string, error) {
 	res, err := vc.collection.InsertOne(context.TODO(), bson.D{
-		{
-			"name", vacancy.Name,
-		},
-		{
-			"description", vacancy.Description,
-		},
-		{
-			"tags", vacancy.Tags,
-		},
+		{"name", vacancy.Name},
+		{"description", vacancy.Description},
+		{"tags", vacancy.Tags},
 	})
 	if err != nil {
 		return "-1", err
