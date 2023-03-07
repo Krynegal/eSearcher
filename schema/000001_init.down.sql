@@ -1,0 +1,10 @@
+DROP TABLE applicant_id_busyness_id;
+DROP TABLE applicant_id_schedule_id;
+DROP TABLE applicant_id_specialization_id;
+DROP TABLE employer_id_vacancy_id;
+DROP TABLE busyness;
+DROP TABLE schedule;
+DROP TABLE responses;
+DROP TABLE employers;
+DROP TABLE specializations;
+DROP TABLE applicants;

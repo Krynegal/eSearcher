@@ -9,14 +9,20 @@ type VacancyService interface {
 
 type ApplicantsService interface {
 	Create(applicant *models.Applicant) error
+	SearchApplicant(params *models.SearchApplicantParams) ([]*models.Applicant, error)
 }
 
 type SpecializationsService interface {
-	Get() ([]*models.Specialization, error)
+	GetAllSpecializations() ([]*models.Specialization, error)
+}
+
+type EmployersService interface {
+	Create(applicant *models.Employer) error
 }
 
 type Services struct {
 	VacancyService
 	ApplicantsService
 	SpecializationsService
+	EmployersService
 }

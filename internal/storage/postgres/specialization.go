@@ -14,15 +14,24 @@ func NewSpecializationsStore(pool *pgxpool.Pool) *SpecializationsDB {
 	return &SpecializationsDB{pool: pool}
 }
 
-func (a *SpecializationsDB) Get() ([]*models.Specialization, error) {
+func (s *SpecializationsDB) GetAllSpecializations() ([]*models.Specialization, error) {
 	ctx := context.Background()
-	conn, err := a.pool.Acquire(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Release()
-	if _, err = conn.Query(ctx, `SELECT * FROM specializations`); err != nil {
+	rows, err := conn.Query(ctx, `SELECT * FROM specializations`)
+	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	var specializations []*models.Specialization
+	for rows.Next() {
+		var specialization models.Specialization
+		if err = rows.Scan(&specialization.ID, &specialization.Name); err != nil {
+			return nil, err
+		}
+		specializations = append(specializations, &specialization)
+	}
+	return specializations, nil
 }

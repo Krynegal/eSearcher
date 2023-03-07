@@ -26,13 +26,16 @@ func main() {
 	}
 
 	store := &storage.Storage{
-		VacancyStorage:   mongodb.NewVacancyCollection(mongo, "vacancies"),
-		ApplicantStorage: postgres.NewApplicantsStore(dbpool),
+		VacancyStorage:        mongodb.NewVacancyCollection(mongo, "vacancies"),
+		ApplicantStorage:      postgres.NewApplicantsStore(dbpool),
+		SpecializationStorage: postgres.NewSpecializationsStore(dbpool),
+		EmployerStorage:       postgres.NewEmployersStore(dbpool),
 	}
 	svc := &service.Services{
 		VacancyService:         service.NewVacancies(store.VacancyStorage),
 		ApplicantsService:      service.NewApplicants(store.ApplicantStorage),
 		SpecializationsService: service.NewSpecializations(store.SpecializationStorage),
+		EmployersService:       service.NewEmployers(store.EmployerStorage),
 	}
 
 	//rateLimiter, err := redis.New(cfg)

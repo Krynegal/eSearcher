@@ -23,7 +23,7 @@ type Config struct {
 	RedisPort    string
 }
 
-//envDefault:"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+// envDefault:"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 func NewConfig() *Config {
 	cfg := &Config{}
 	err := godotenv.Load()
@@ -46,8 +46,8 @@ func NewConfig() *Config {
 	cfg.MongoHost = os.Getenv("MONGO_HOST")
 	cfg.MongoPort = os.Getenv("MONGO_PORT")
 
-	cfg.MongoPort = os.Getenv("REDIS_HOST")
-	cfg.MongoPort = os.Getenv("REDIS_PORT")
+	cfg.RedisHost = os.Getenv("REDIS_HOST")
+	cfg.RedisPort = os.Getenv("REDIS_PORT")
 
 	log.Printf("configs: %+v\n", *cfg)
 	return cfg

@@ -13,10 +13,10 @@ func NewSpecializations(storage storage.SpecializationStorage) *Specializations 
 	return &Specializations{store: storage}
 }
 
-func (s *Specializations) Get() ([]*models.Specialization, error) {
-	_, err := s.store.Get()
+func (s *Specializations) GetAllSpecializations() ([]*models.Specialization, error) {
+	specializations, err := s.store.GetAllSpecializations()
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return specializations, nil
 }

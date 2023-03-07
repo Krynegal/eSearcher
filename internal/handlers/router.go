@@ -34,4 +34,8 @@ func (r *Router) InitRoutes() {
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
 
 	r.Router.HandleFunc("/api/applicant/create", r.CreateApplicant).Methods(http.MethodPost)
+	r.Router.HandleFunc("/api/applicant/search", r.SearchApplicant).Methods(http.MethodPost)
+
+	r.Router.HandleFunc("/api/specializations", r.GetAllSpecializations).Methods(http.MethodGet)
+	//r.Router.HandleFunc("/api/response", r.AddResponse).Methods(http.MethodPost)
 }
