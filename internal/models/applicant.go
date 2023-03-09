@@ -1,11 +1,12 @@
 package models
 
 type Applicant struct {
-	ID       string
-	Name     string
-	Lastname string
-	Busyness []int
-	Schedule []int
+	ID             string
+	Name           string
+	Lastname       string
+	Specialization []int
+	Busyness       []int
+	Schedule       []int
 }
 
 type SearchApplicantParams struct {

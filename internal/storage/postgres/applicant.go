@@ -46,8 +46,6 @@ func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]*models.A
 	//	WHERE applicant_id_schedule_id.schedule_id IN $1 OR applicant_id_busyness_id.busyness_id IN $2`,
 	//	params.Schedule, params.Busyness)
 
-	//AND
-	//id IN (select applicant_id from applicant_id_specialization_id WHERE specialization = ANY $3)
 	FillEmpty(params)
 	fmt.Printf("params: %+v", params)
 	schedule := &pgtype.Int4Array{}
@@ -58,13 +56,19 @@ func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]*models.A
 	if err = busyness.Set(params.Busyness); err != nil {
 		return nil, err
 	}
+	specialization := &pgtype.Int4Array{}
+	if err = specialization.Set(params.Specialization); err != nil {
+		return nil, err
+	}
 	rows, err := conn.Query(ctx,
 		`select id from applicants WHERE
 		id IN (select applicant_id from applicant_id_schedule_id WHERE schedule_id = ANY ($1)) 
 		AND
 		id IN (select applicant_id from applicant_id_busyness_id WHERE busyness_id = ANY ($2))
+		AND
+		id IN (select applicant_id from applicant_id_specialization_id WHERE specialization_id = ANY ($3))
 		`,
-		schedule, busyness)
+		schedule, busyness, specialization)
 
 	if err != nil {
 		return nil, err
@@ -78,19 +82,42 @@ func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]*models.A
 		applicantIDs = append(applicantIDs, id)
 	}
 	fmt.Printf("applicantIDs: %v", applicantIDs)
-	//var applicants []*models.Applicant
-	//for rows.Next() {
-	//	var applicant models.Applicant
-	//	if err = rows.Scan(
-	//		&applicant.ID,
-	//		&applicant.Name,
-	//		&applicant.Lastname,
-	//		&applicant.Schedule,
-	//		&applicant.Busyness,
-	//	); err != nil {
-	//		return nil, err
-	//	}
-	//	applicants = append(applicants, &applicant)
-	//}
+	var applicants []*models.Applicant
+	for _, id := range applicantIDs {
+		applicant := models.Applicant{}
+		if err = conn.QueryRow(ctx,
+			`select id, name, lastname from applicants where id = $1`, id).Scan(
+			&applicant.ID, applicant.Name, applicant.Lastname); err != nil {
+			return nil, err
+		}
+		aSchedule, err := conn.Query(ctx, `
+		select schedule_id from applicant_id_schedule_id where applicant_id = $1`, id)
+		for aSchedule.Next() {
+			var s int
+			if err = rows.Scan(&s); err != nil {
+				return nil, err
+			}
+			applicant.Schedule = append(applicant.Schedule, s)
+		}
+		aBusyness, err := conn.Query(ctx, `
+		select busyness_id from applicant_id_busyness_id where applicant_id = $1`, id)
+		for aBusyness.Next() {
+			var b int
+			if err = rows.Scan(&b); err != nil {
+				return nil, err
+			}
+			applicant.Busyness = append(applicant.Busyness, b)
+		}
+		aSpecializations, err := conn.Query(ctx, `
+		select specialization_id from applicant_id_specialization_id where applicant_id = $1`, id)
+		for aSpecializations.Next() {
+			var s int
+			if err = rows.Scan(&s); err != nil {
+				return nil, err
+			}
+			applicant.Specialization = append(applicant.Specialization, s)
+		}
+		applicants = append(applicants, &applicant)
+	}
 	return nil, nil
 }
