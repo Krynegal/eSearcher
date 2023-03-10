@@ -21,9 +21,15 @@ type EmployersService interface {
 	Create(applicant *models.Employer) error
 }
 
+type ResponsesService interface {
+	Add(response *models.Response) error
+	Delete(response *models.Response) error
+}
+
 type Services struct {
 	VacancyService
 	ApplicantsService
 	SpecializationsService
 	EmployersService
+	ResponsesService
 }

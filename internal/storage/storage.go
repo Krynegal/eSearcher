@@ -21,9 +21,15 @@ type EmployerStorage interface {
 	Create(employer *models.Employer) (string, error)
 }
 
+type ResponsesStorage interface {
+	Add(response *models.Response) error
+	Delete(response *models.Response) error
+}
+
 type Storage struct {
 	VacancyStorage
 	ApplicantStorage
 	SpecializationStorage
 	EmployerStorage
+	ResponsesStorage
 }

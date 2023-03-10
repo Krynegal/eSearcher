@@ -30,12 +30,14 @@ func main() {
 		ApplicantStorage:      postgres.NewApplicantsStore(dbpool),
 		SpecializationStorage: postgres.NewSpecializationsStore(dbpool),
 		EmployerStorage:       postgres.NewEmployersStore(dbpool),
+		ResponsesStorage:      postgres.NewResponsesStore(dbpool),
 	}
 	svc := &service.Services{
 		VacancyService:         service.NewVacancies(store.VacancyStorage),
 		ApplicantsService:      service.NewApplicants(store.ApplicantStorage),
 		SpecializationsService: service.NewSpecializations(store.SpecializationStorage),
 		EmployersService:       service.NewEmployers(store.EmployerStorage),
+		ResponsesService:       service.NewResponses(store.ResponsesStorage),
 	}
 
 	//rateLimiter, err := redis.New(cfg)
