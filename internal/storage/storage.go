@@ -9,7 +9,8 @@ type VacancyStorage interface {
 
 type ApplicantStorage interface {
 	Create(applicant *models.Applicant) (int, error)
-	Search(params *models.SearchApplicantParams) ([]*models.Applicant, error)
+	Get(id string) (*models.Applicant, error)
+	Search(params *models.SearchApplicantParams) ([]string, error)
 }
 
 type SpecializationStorage interface {

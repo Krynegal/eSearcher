@@ -4,9 +4,26 @@ import (
 	"eSearcher/internal/models"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 )
+
+func (r *Router) GetApplicant(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id := vars["id"]
+	applicant, err := r.Services.ApplicantsService.Get(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(applicant)
+	if err != nil {
+		http.Error(w, "cannot marshall data", http.StatusInternalServerError)
+		return
+	}
+	w.Write(res)
+}
 
 func (r *Router) CreateApplicant(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
@@ -44,6 +61,7 @@ func (r *Router) SearchApplicant(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Printf("params to search applicant: %+v\n", params)
 	applicants, err := r.Services.ApplicantsService.SearchApplicant(params)
+	fmt.Printf("found applicants: %v\n", applicants)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -32,19 +32,57 @@ func (a *ApplicantsDB) Create(applicant *models.Applicant) (int, error) {
 	return id, nil
 }
 
-func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]*models.Applicant, error) {
+func (a *ApplicantsDB) Get(id string) (*models.Applicant, error) {
 	ctx := context.Background()
 	conn, err := a.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Release()
-	//rows, err := conn.Query(ctx,
-	//	`select id, name, lastname, schedule_id, busyness_id from applicants
-	//	JOIN applicant_id_schedule_id on applicants.id=applicant_id_schedule_id.applicant_id
-	//	JOIN applicant_id_busyness_id on applicants.id=applicant_id_busyness_id.applicant_id
-	//	WHERE applicant_id_schedule_id.schedule_id IN $1 OR applicant_id_busyness_id.busyness_id IN $2`,
-	//	params.Schedule, params.Busyness)
+
+	applicant := models.Applicant{}
+	if err = conn.QueryRow(ctx,
+		`select id, name, lastname from applicants where id = $1`, id).Scan(
+		&applicant.ID, &applicant.Name, &applicant.Lastname); err != nil {
+		return nil, err
+	}
+	aSchedule, err := conn.Query(ctx, `
+		select schedule_id from applicant_id_schedule_id where applicant_id = $1`, id)
+	for aSchedule.Next() {
+		var s int
+		if err = aSchedule.Scan(&s); err != nil {
+			return nil, err
+		}
+		applicant.Schedule = append(applicant.Schedule, s)
+	}
+	aBusyness, err := conn.Query(ctx, `
+		select busyness_id from applicant_id_busyness_id where applicant_id = $1`, id)
+	for aBusyness.Next() {
+		var b int
+		if err = aBusyness.Scan(&b); err != nil {
+			return nil, err
+		}
+		applicant.Busyness = append(applicant.Busyness, b)
+	}
+	aSpecializations, err := conn.Query(ctx, `
+		select specialization_id from applicant_id_specialization_id where applicant_id = $1`, id)
+	for aSpecializations.Next() {
+		var s int
+		if err = aSpecializations.Scan(&s); err != nil {
+			return nil, err
+		}
+		applicant.Specialization = append(applicant.Specialization, s)
+	}
+	return &applicant, err
+}
+
+func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]string, error) {
+	ctx := context.Background()
+	conn, err := a.pool.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Release()
 
 	FillEmpty(params)
 	fmt.Printf("params: %+v", params)
@@ -69,55 +107,17 @@ func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]*models.A
 		id IN (select applicant_id from applicant_id_specialization_id WHERE specialization_id = ANY ($3))
 		`,
 		schedule, busyness, specialization)
-
 	if err != nil {
 		return nil, err
 	}
-	var applicantIDs []int
+	var applicantIDs []string
 	for rows.Next() {
-		var id int
+		var id string
 		if err = rows.Scan(&id); err != nil {
 			return nil, err
 		}
 		applicantIDs = append(applicantIDs, id)
 	}
 	fmt.Printf("applicantIDs: %v", applicantIDs)
-	var applicants []*models.Applicant
-	for _, id := range applicantIDs {
-		applicant := models.Applicant{}
-		if err = conn.QueryRow(ctx,
-			`select id, name, lastname from applicants where id = $1`, id).Scan(
-			&applicant.ID, applicant.Name, applicant.Lastname); err != nil {
-			return nil, err
-		}
-		aSchedule, err := conn.Query(ctx, `
-		select schedule_id from applicant_id_schedule_id where applicant_id = $1`, id)
-		for aSchedule.Next() {
-			var s int
-			if err = rows.Scan(&s); err != nil {
-				return nil, err
-			}
-			applicant.Schedule = append(applicant.Schedule, s)
-		}
-		aBusyness, err := conn.Query(ctx, `
-		select busyness_id from applicant_id_busyness_id where applicant_id = $1`, id)
-		for aBusyness.Next() {
-			var b int
-			if err = rows.Scan(&b); err != nil {
-				return nil, err
-			}
-			applicant.Busyness = append(applicant.Busyness, b)
-		}
-		aSpecializations, err := conn.Query(ctx, `
-		select specialization_id from applicant_id_specialization_id where applicant_id = $1`, id)
-		for aSpecializations.Next() {
-			var s int
-			if err = rows.Scan(&s); err != nil {
-				return nil, err
-			}
-			applicant.Specialization = append(applicant.Specialization, s)
-		}
-		applicants = append(applicants, &applicant)
-	}
-	return nil, nil
+	return applicantIDs, nil
 }

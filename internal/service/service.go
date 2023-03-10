@@ -9,6 +9,7 @@ type VacancyService interface {
 
 type ApplicantsService interface {
 	Create(applicant *models.Applicant) error
+	Get(id string) (*models.Applicant, error)
 	SearchApplicant(params *models.SearchApplicantParams) ([]*models.Applicant, error)
 }
 
