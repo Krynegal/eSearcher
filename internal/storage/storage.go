@@ -2,6 +2,11 @@ package storage
 
 import "eSearcher/internal/models"
 
+type AuthStorage interface {
+	CreateUser(login, password string, role int) (int, error)
+	GetUser(login, password string) (*models.User, error)
+}
+
 type VacancyStorage interface {
 	Create(vacancy *models.Vacancy) (string, error)
 	Search(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
@@ -27,6 +32,7 @@ type ResponsesStorage interface {
 }
 
 type Storage struct {
+	AuthStorage
 	VacancyStorage
 	ApplicantStorage
 	SpecializationStorage

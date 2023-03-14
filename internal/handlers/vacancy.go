@@ -9,6 +9,21 @@ import (
 )
 
 func (r *Router) CreateVacancy(w http.ResponseWriter, req *http.Request) {
+
+	userID, err := r.getUserIDFromToken(w, req)
+	if err != nil {
+		return
+	}
+	userRole, err := r.getUserRoleFromToken(w, req)
+	if err != nil {
+		return
+	}
+	fmt.Printf("userID: %v, userRole: %v", userID, userRole)
+	if userRole != 3 {
+		http.Error(w, "you are not employer", http.StatusInternalServerError)
+		return
+	}
+
 	defer req.Body.Close()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {

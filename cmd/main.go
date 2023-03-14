@@ -26,6 +26,7 @@ func main() {
 	}
 
 	store := &storage.Storage{
+		AuthStorage:           postgres.NewAuthStore(dbpool),
 		VacancyStorage:        mongodb.NewVacancyCollection(mongo, "vacancies"),
 		ApplicantStorage:      postgres.NewApplicantsStore(dbpool),
 		SpecializationStorage: postgres.NewSpecializationsStore(dbpool),
@@ -33,6 +34,7 @@ func main() {
 		ResponsesStorage:      postgres.NewResponsesStore(dbpool),
 	}
 	svc := &service.Services{
+		AuthService:            service.NewAuth(store.AuthStorage),
 		VacancyService:         service.NewVacancies(store.VacancyStorage),
 		ApplicantsService:      service.NewApplicants(store.ApplicantStorage),
 		SpecializationsService: service.NewSpecializations(store.SpecializationStorage),
@@ -45,8 +47,8 @@ func main() {
 	//	log.Fatal(err)
 	//}
 
-	r := handlers.NewRouter(cfg, svc)
-	serverURL := fmt.Sprintf("%s:%s", cfg.ServerHost, cfg.ServerPort)
+	r := handlers.NewRouter(svc)
+	serverURL := fmt.Sprintf("%s:%s", cfg.Server.ServerHost, cfg.Server.ServerPort)
 	log.Printf("server run on: %s", serverURL)
 	log.Fatal(http.ListenAndServe(serverURL, r))
 }

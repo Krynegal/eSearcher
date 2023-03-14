@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"eSearcher/configs"
+	"eSearcher/internal/middlewares"
 	"eSearcher/internal/service"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -9,16 +9,14 @@ import (
 
 type Router struct {
 	*mux.Router
-	Services   *service.Services
-	GoogleAuth *GoogleAuth
+	Services *service.Services
 	//RateLimiter redis.RateLimiter
 }
 
-func NewRouter(cfg *configs.Config, services *service.Services) *Router {
+func NewRouter(services *service.Services) *Router {
 	router := &Router{
-		Router:     mux.NewRouter(),
-		Services:   services,
-		GoogleAuth: NewGoogleAuth(cfg),
+		Router:   mux.NewRouter(),
+		Services: services,
 		//RateLimiter: rateLimiter,
 	}
 	router.InitRoutes()
@@ -26,11 +24,11 @@ func NewRouter(cfg *configs.Config, services *service.Services) *Router {
 }
 
 func (r *Router) InitRoutes() {
-	r.Router.HandleFunc("/", r.HandleMain)
-	r.Router.HandleFunc("/login-gl", r.HandleGoogleLogin)
-	r.Router.HandleFunc("/callback-gl", r.CallBackFromGoogle)
+	r.Router.HandleFunc("/api/user/register", r.registration).Methods(http.MethodPost)
+	r.Router.HandleFunc("/api/user/login", r.authentication).Methods(http.MethodPost)
 
-	r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
+	//r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
+	r.Router.Handle("/api/vacancy/create", middlewares.AuthMiddleware(r.CreateVacancy)).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
 
 	r.Router.HandleFunc("/api/applicant/{id}", r.GetApplicant).Methods(http.MethodGet)

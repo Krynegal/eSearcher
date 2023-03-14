@@ -1,6 +1,14 @@
 package service
 
-import "eSearcher/internal/models"
+import (
+	"eSearcher/internal/models"
+)
+
+type AuthService interface {
+	CreateUser(login, password string, role int) (int, error)
+	AuthUser(login, password string) (*models.User, error)
+	GenerateToken(uid int, roles int) (string, error)
+}
 
 type VacancyService interface {
 	CreateVacancy(vacancy *models.Vacancy) error
@@ -27,6 +35,7 @@ type ResponsesService interface {
 }
 
 type Services struct {
+	AuthService
 	VacancyService
 	ApplicantsService
 	SpecializationsService

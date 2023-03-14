@@ -9,7 +9,7 @@ import (
 )
 
 func New(cfg *configs.Config) (*mongo.Database, error) {
-	mongoDBURL := fmt.Sprintf("mongodb://%s:%s", cfg.MongoHost, cfg.MongoPort)
+	mongoDBURL := fmt.Sprintf("mongodb://%s:%s", cfg.Mongo.MongoHost, cfg.Mongo.MongoPort)
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoDBURL))
 	if err != nil {
 		return nil, err
@@ -18,5 +18,5 @@ func New(cfg *configs.Config) (*mongo.Database, error) {
 		return nil, fmt.Errorf("mongo %v", err)
 	}
 
-	return client.Database(cfg.MongoName), nil
+	return client.Database(cfg.Mongo.MongoName), nil
 }

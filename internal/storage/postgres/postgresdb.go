@@ -13,7 +13,7 @@ import (
 
 func NewPostgresDB(cfg *configs.Config) (*pgxpool.Pool, error) {
 	postgresURL := fmt.Sprintf("postgres://%s:%s@%s:%s/postgres?sslmode=disable",
-		cfg.PostgresUser, cfg.PostgresPass, cfg.PostgresHost, cfg.PostgresPort)
+		cfg.Postgres.PostgresUser, cfg.Postgres.PostgresPass, cfg.Postgres.PostgresHost, cfg.Postgres.PostgresPort)
 	if err := migrateDB(postgresURL); err != nil {
 		return nil, err
 	}
