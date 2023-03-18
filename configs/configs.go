@@ -31,7 +31,6 @@ type Config struct {
 	}
 }
 
-// envDefault:"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 func NewConfig() *Config {
 	cfg := &Config{}
 	err := godotenv.Load()

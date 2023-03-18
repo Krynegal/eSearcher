@@ -26,20 +26,20 @@ func main() {
 	}
 
 	store := &storage.Storage{
-		AuthStorage:           postgres.NewAuthStore(dbpool),
-		VacancyStorage:        mongodb.NewVacancyCollection(mongo, "vacancies"),
-		ApplicantStorage:      postgres.NewApplicantsStore(dbpool),
-		SpecializationStorage: postgres.NewSpecializationsStore(dbpool),
-		EmployerStorage:       postgres.NewEmployersStore(dbpool),
-		ResponsesStorage:      postgres.NewResponsesStore(dbpool),
+		AuthStorage:      postgres.NewAuthStore(dbpool),
+		OptionsStorage:   postgres.NewOptionsStore(dbpool),
+		VacancyStorage:   mongodb.NewVacancyCollection(mongo, "vacancies"),
+		ApplicantStorage: postgres.NewApplicantsStore(dbpool),
+		EmployerStorage:  postgres.NewEmployersStore(dbpool),
+		ResponsesStorage: postgres.NewResponsesStore(dbpool),
 	}
 	svc := &service.Services{
-		AuthService:            service.NewAuth(store.AuthStorage),
-		VacancyService:         service.NewVacancies(store.VacancyStorage),
-		ApplicantsService:      service.NewApplicants(store.ApplicantStorage),
-		SpecializationsService: service.NewSpecializations(store.SpecializationStorage),
-		EmployersService:       service.NewEmployers(store.EmployerStorage),
-		ResponsesService:       service.NewResponses(store.ResponsesStorage),
+		AuthService:       service.NewAuth(cfg, store.AuthStorage),
+		OptionsService:    service.NewOptions(store.OptionsStorage),
+		VacancyService:    service.NewVacancies(store.VacancyStorage),
+		ApplicantsService: service.NewApplicants(store.ApplicantStorage),
+		EmployersService:  service.NewEmployers(store.EmployerStorage),
+		ResponsesService:  service.NewResponses(store.ResponsesStorage),
 	}
 
 	//rateLimiter, err := redis.New(cfg)

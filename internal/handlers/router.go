@@ -27,6 +27,9 @@ func (r *Router) InitRoutes() {
 	r.Router.HandleFunc("/api/user/register", r.registration).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/user/login", r.authentication).Methods(http.MethodPost)
 
+	// Data for applicant and employer pages
+	r.Router.HandleFunc("/api/options", r.GetAllOptions).Methods(http.MethodGet)
+
 	//r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
 	r.Router.Handle("/api/vacancy/create", middlewares.AuthMiddleware(r.CreateVacancy)).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
@@ -34,8 +37,6 @@ func (r *Router) InitRoutes() {
 	r.Router.HandleFunc("/api/applicant/{id}", r.GetApplicant).Methods(http.MethodGet)
 	r.Router.HandleFunc("/api/applicant/create", r.CreateApplicant).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/applicant/search", r.SearchApplicant).Methods(http.MethodPost)
-
-	r.Router.HandleFunc("/api/specializations", r.GetAllSpecializations).Methods(http.MethodGet)
 
 	r.Router.HandleFunc("/api/response/add", r.AddResponse).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/response/delete", r.DeleteResponse).Methods(http.MethodPost)
