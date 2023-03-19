@@ -14,6 +14,21 @@ func NewResponsesStore(pool *pgxpool.Pool) *ResponsesDB {
 	return &ResponsesDB{pool: pool}
 }
 
+func (r *ResponsesDB) ChangeStatus(response *models.Response) error {
+	ctx := context.Background()
+	conn, err := r.pool.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Release()
+	if _, err = conn.Exec(ctx,
+		`update responses set status_id=$1 WHERE user_id=$2 AND vacancy_id=$3`,
+		response.StatusID, response.ApplicantID, response.VacancyID); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *ResponsesDB) GetUsersVacancyIDs(uid int) ([]string, error) {
 	ctx := context.Background()
 	conn, err := r.pool.Acquire(ctx)

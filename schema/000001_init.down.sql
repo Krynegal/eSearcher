@@ -15,6 +15,7 @@ DROP TABLE employers;
 DROP TABLE education_grades;
 DROP TABLE education_institutions;
 DROP TABLE specializations;
+DROP TABLE seniority;
 DROP TABLE schedule;
 DROP TABLE busyness;
 DROP TABLE language_levels;

@@ -20,8 +20,8 @@ type VacancyStorage interface {
 
 type ApplicantStorage interface {
 	Create(applicant *models.Applicant) (int, error)
-	Get(id string) (*models.Applicant, error)
-	Search(params *models.SearchApplicantParams) ([]string, error)
+	Get(id int) (*models.Applicant, error)
+	Search(params *models.SearchApplicantParams) ([]int, error)
 }
 
 type EmployerStorage interface {
@@ -29,6 +29,7 @@ type EmployerStorage interface {
 }
 
 type ResponsesStorage interface {
+	ChangeStatus(response *models.Response) error
 	GetUsersVacancyIDs(uid int) ([]string, error)
 	Add(response *models.Response) error
 	Delete(response *models.Response) error

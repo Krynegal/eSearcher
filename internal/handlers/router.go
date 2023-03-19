@@ -40,10 +40,14 @@ func (r *Router) InitRoutes() {
 	// Applicant handlers
 	r.Router.HandleFunc("/api/applicant/{id}", r.GetApplicant).Methods(http.MethodGet)
 	r.Router.HandleFunc("/api/applicant/", r.CreateApplicant).Methods(http.MethodPost)
+	//r.Router.HandleFunc("/api/applicant/{id}", r.UpdateApplicant).Methods(http.MethodPatch)
 	r.Router.HandleFunc("/api/applicant/search", r.SearchApplicant).Methods(http.MethodPost)
+
+	//r.Router.HandleFunc("/api/employer/me", r.CreateApplicant).Methods(http.MethodPost)
 
 	// Response handlers
 	r.Router.HandleFunc("/api/response/my", r.GetMyResponses).Methods(http.MethodGet)
-	r.Router.HandleFunc("/api/response/add", r.AddResponse).Methods(http.MethodPost)
-	r.Router.HandleFunc("/api/response/delete", r.DeleteResponse).Methods(http.MethodPost)
+	r.Router.HandleFunc("/api/response/", r.AddResponse).Methods(http.MethodPost)
+	r.Router.HandleFunc("/api/response/", r.ChangeStatus).Methods(http.MethodPatch)
+	r.Router.HandleFunc("/api/response/", r.DeleteResponse).Methods(http.MethodDelete)
 }

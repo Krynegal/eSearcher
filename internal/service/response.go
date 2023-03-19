@@ -13,6 +13,13 @@ func NewResponses(storage storage.ResponsesStorage) *Responses {
 	return &Responses{store: storage}
 }
 
+func (rs *Responses) ChangeStatus(response *models.Response) error {
+	if err := rs.store.ChangeStatus(response); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (rs *Responses) GetUsersVacancyIDs(uid int) ([]string, error) {
 	vacancyIDs, err := rs.store.GetUsersVacancyIDs(uid)
 	if err != nil {

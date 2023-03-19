@@ -64,10 +64,16 @@ CREATE TABLE IF NOT EXISTS spheres
     name character varying NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS seniority
+(
+    id serial PRIMARY KEY,
+    name character varying NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS users
 (
     id serial PRIMARY KEY,
-    login character varying NOT NULL,
+    login character varying NOT NULL UNIQUE,
     password character varying NOT NULL,
     role_id integer REFERENCES roles (id),
     banned BOOLEAN NOT NULL DEFAULT FALSE
@@ -129,8 +135,8 @@ CREATE TABLE IF NOT EXISTS employer_id_sphere_id
 CREATE TABLE IF NOT EXISTS applicant_id_language_id
 (
     user_id integer REFERENCES users (id) NOT NULL,
-    language_id integer REFERENCES languages (id) NOT NULL,
-    language_level integer REFERENCES language_levels (id) NOT NULL
+    language_id integer REFERENCES languages (id),
+    language_level integer REFERENCES language_levels (id)
 );
 
 CREATE TABLE IF NOT EXISTS applicant_id_busyness_id

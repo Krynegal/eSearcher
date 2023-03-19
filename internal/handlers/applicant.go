@@ -7,11 +7,16 @@ import (
 	"github.com/gorilla/mux"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 func (r *Router) GetApplicant(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	id := vars["id"]
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	applicant, err := r.Services.ApplicantsService.Get(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,10 +46,10 @@ func (r *Router) CreateApplicant(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fmt.Printf("%+v", applicant)
-	//if err = r.Services.ApplicantsService.Create(applicant); err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
+	if err = r.Services.ApplicantsService.Create(applicant); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
 }
 

@@ -23,7 +23,7 @@ func (a *Applicants) Create(applicant *models.Applicant) error {
 	return nil
 }
 
-func (a *Applicants) Get(id string) (*models.Applicant, error) {
+func (a *Applicants) Get(id int) (*models.Applicant, error) {
 	applicant, err := a.store.Get(id)
 	if err != nil {
 		return nil, err
