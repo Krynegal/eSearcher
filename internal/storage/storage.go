@@ -12,6 +12,8 @@ type OptionsStorage interface {
 }
 
 type VacancyStorage interface {
+	GetEmployerVacancies(uid int) ([]*models.Vacancy, error)
+	GetByID(id string) (*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (string, error)
 	Search(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }
@@ -27,6 +29,7 @@ type EmployerStorage interface {
 }
 
 type ResponsesStorage interface {
+	GetUsersVacancyIDs(uid int) ([]string, error)
 	Add(response *models.Response) error
 	Delete(response *models.Response) error
 }

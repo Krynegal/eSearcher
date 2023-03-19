@@ -8,8 +8,25 @@ import (
 	"net/http"
 )
 
-func (r *Router) CreateVacancy(w http.ResponseWriter, req *http.Request) {
+func (r *Router) GetMyVacancies(w http.ResponseWriter, req *http.Request) {
+	userID, err := r.getUserIDFromToken(w, req)
+	if err != nil {
+		return
+	}
+	vacancies, err := r.Services.VacancyService.GetEmployerVacancies(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(vacancies)
+	if err != nil {
+		http.Error(w, "cannot marshall data", http.StatusInternalServerError)
+		return
+	}
+	w.Write(res)
+}
 
+func (r *Router) CreateVacancy(w http.ResponseWriter, req *http.Request) {
 	userID, err := r.getUserIDFromToken(w, req)
 	if err != nil {
 		return

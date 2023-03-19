@@ -7,6 +7,29 @@ import (
 	"net/http"
 )
 
+func (r *Router) GetMyResponses(w http.ResponseWriter, req *http.Request) {
+	userID, err := r.getUserIDFromToken(w, req)
+	if err != nil {
+		return
+	}
+	vacancyIDs, err := r.Services.ResponsesService.GetUsersVacancyIDs(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	vacancies, err := r.Services.VacancyService.GetByIDs(vacancyIDs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(vacancies)
+	if err != nil {
+		http.Error(w, "cannot marshall data", http.StatusInternalServerError)
+		return
+	}
+	w.Write(res)
+}
+
 func (r *Router) AddResponse(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	body, err := io.ReadAll(req.Body)
