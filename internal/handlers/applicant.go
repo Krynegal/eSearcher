@@ -17,6 +17,8 @@ func (r *Router) GetApplicant(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	fmt.Printf("%+v", applicant)
+	//var applicant models.Applicant
 	res, err := json.Marshal(applicant)
 	if err != nil {
 		http.Error(w, "cannot marshall data", http.StatusInternalServerError)
@@ -38,11 +40,11 @@ func (r *Router) CreateApplicant(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "cannot unmarshall data", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(applicant)
-	if err = r.Services.ApplicantsService.Create(applicant); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	fmt.Printf("%+v", applicant)
+	//if err = r.Services.ApplicantsService.Create(applicant); err != nil {
+	//	http.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
 	w.WriteHeader(http.StatusCreated)
 }
 

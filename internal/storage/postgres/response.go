@@ -22,8 +22,8 @@ func (r *ResponsesDB) Add(response *models.Response) error {
 	}
 	defer conn.Release()
 	if _, err = conn.Exec(ctx,
-		`INSERT INTO responses (applicant_id, vacancy_id) VALUES($1, $2)`,
-		response.ApplicantID, response.VacancyID); err != nil {
+		`INSERT INTO responses (user_id, vacancy_id, status_id) VALUES($1, $2, $3)`,
+		response.ApplicantID, response.VacancyID, response.StatusID); err != nil {
 		return err
 	}
 	return nil

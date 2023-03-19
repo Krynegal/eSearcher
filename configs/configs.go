@@ -4,6 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -28,6 +29,9 @@ type Config struct {
 	Redis struct {
 		RedisHost string
 		RedisPort string
+		Bucket    int
+		Expiry    int
+		Threshold int
 	}
 }
 
@@ -54,6 +58,9 @@ func NewConfig() *Config {
 
 	cfg.Redis.RedisHost = os.Getenv("REDIS_HOST")
 	cfg.Redis.RedisPort = os.Getenv("REDIS_PORT")
+	cfg.Redis.Bucket, _ = strconv.Atoi(os.Getenv("BUCKET"))
+	cfg.Redis.Expiry, _ = strconv.Atoi(os.Getenv("EXPIRY"))
+	cfg.Redis.Threshold, _ = strconv.Atoi(os.Getenv("THRESHOLD"))
 
 	log.Printf("configs: %+v\n", *cfg)
 	return cfg

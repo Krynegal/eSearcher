@@ -47,7 +47,7 @@ func main() {
 	//	log.Fatal(err)
 	//}
 
-	r := handlers.NewRouter(svc)
+	r := handlers.NewRouter(cfg, svc)
 	serverURL := fmt.Sprintf("%s:%s", cfg.Server.ServerHost, cfg.Server.ServerPort)
 	log.Printf("server run on: %s", serverURL)
 	log.Fatal(http.ListenAndServe(serverURL, r))

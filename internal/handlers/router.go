@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"eSearcher/configs"
 	"eSearcher/internal/middlewares"
 	"eSearcher/internal/service"
 	"github.com/gorilla/mux"
@@ -10,34 +11,37 @@ import (
 type Router struct {
 	*mux.Router
 	Services *service.Services
-	//RateLimiter redis.RateLimiter
+	Config   *configs.Config
 }
 
-func NewRouter(services *service.Services) *Router {
+func NewRouter(cfg *configs.Config, services *service.Services) *Router {
 	router := &Router{
 		Router:   mux.NewRouter(),
 		Services: services,
-		//RateLimiter: rateLimiter,
+		Config:   cfg,
 	}
 	router.InitRoutes()
 	return router
 }
 
 func (r *Router) InitRoutes() {
+	r.Router.Use(middlewares.RateLimitMiddleWare(r.Config))
 	r.Router.HandleFunc("/api/user/register", r.registration).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/user/login", r.authentication).Methods(http.MethodPost)
 
 	// Data for applicant and employer pages
 	r.Router.HandleFunc("/api/options", r.GetAllOptions).Methods(http.MethodGet)
 
-	//r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
-	r.Router.Handle("/api/vacancy/create", middlewares.AuthMiddleware(r.CreateVacancy)).Methods(http.MethodPost)
+	// Vacancy handlers
+	r.Router.HandleFunc("/api/vacancy/create", r.CreateVacancy).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
 
+	// Applicant handlers
 	r.Router.HandleFunc("/api/applicant/{id}", r.GetApplicant).Methods(http.MethodGet)
-	r.Router.HandleFunc("/api/applicant/create", r.CreateApplicant).Methods(http.MethodPost)
+	r.Router.HandleFunc("/api/applicant/", r.CreateApplicant).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/applicant/search", r.SearchApplicant).Methods(http.MethodPost)
 
+	// Response handlers
 	r.Router.HandleFunc("/api/response/add", r.AddResponse).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/response/delete", r.DeleteResponse).Methods(http.MethodPost)
 }

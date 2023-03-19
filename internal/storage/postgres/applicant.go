@@ -25,8 +25,8 @@ func (a *ApplicantsDB) Create(applicant *models.Applicant) (int, error) {
 	defer conn.Release()
 	var id int
 	if err = conn.QueryRow(ctx,
-		`INSERT INTO applicants (name, lastname) VALUES($1, $2) RETURNING id`,
-		applicant.Name, applicant.Lastname).Scan(&id); err != nil {
+		`INSERT INTO applicant_info (id, name, lastname) VALUES($1, $2) RETURNING id`,
+		applicant.Info.Name, applicant.Info.Lastname).Scan(&id); err != nil {
 		return -1, err
 	}
 	return id, nil
@@ -40,38 +40,105 @@ func (a *ApplicantsDB) Get(id string) (*models.Applicant, error) {
 	}
 	defer conn.Release()
 
-	applicant := models.Applicant{}
+	var applicantInfo models.ApplicantInfo
 	if err = conn.QueryRow(ctx,
-		`select id, name, lastname from applicants where id = $1`, id).Scan(
-		&applicant.ID, &applicant.Name, &applicant.Lastname); err != nil {
+		`select name, lastname, status_id, phone, birthday, description, male 
+			from applicant_info where user_id = $1`, id).Scan(
+		&applicantInfo.Name,
+		&applicantInfo.Lastname,
+		&applicantInfo.Status,
+		&applicantInfo.Phone,
+		&applicantInfo.Birthday,
+		&applicantInfo.Description,
+		&applicantInfo.Male,
+	); err != nil {
 		return nil, err
 	}
-	aSchedule, err := conn.Query(ctx, `
-		select schedule_id from applicant_id_schedule_id where applicant_id = $1`, id)
-	for aSchedule.Next() {
-		var s int
-		if err = aSchedule.Scan(&s); err != nil {
+
+	fmt.Printf("1: %+v", applicantInfo)
+	var applicantExperiences []models.ApplicantExperience
+	aExp, err := conn.Query(ctx, `
+		select organization, start, finish, position, duties, skills from experience where user_id = $1`, id)
+	for aExp.Next() {
+		var experience models.ApplicantExperience
+		if err = aExp.Scan(&experience.Organization,
+			&experience.Start,
+			&experience.Finish,
+			&experience.Position,
+			&experience.Duties,
+			&experience.Skills); err != nil {
 			return nil, err
 		}
-		applicant.Schedule = append(applicant.Schedule, s)
+		applicantExperiences = append(applicantExperiences, experience)
 	}
-	aBusyness, err := conn.Query(ctx, `
-		select busyness_id from applicant_id_busyness_id where applicant_id = $1`, id)
-	for aBusyness.Next() {
-		var b int
-		if err = aBusyness.Scan(&b); err != nil {
+	fmt.Println("2")
+	var applicantEducations []models.ApplicantEducation
+	aEdu, err := conn.Query(ctx, `
+		select institution_id, grade_id, faculty, specialization, finish from education where user_id = $1`, id)
+	for aEdu.Next() {
+		var education models.ApplicantEducation
+		if err = aEdu.Scan(&education.Institution,
+			&education.Grade,
+			&education.Faculty,
+			&education.Specialization,
+			&education.Finish); err != nil {
 			return nil, err
 		}
-		applicant.Busyness = append(applicant.Busyness, b)
+		applicantEducations = append(applicantEducations, education)
 	}
-	aSpecializations, err := conn.Query(ctx, `
-		select specialization_id from applicant_id_specialization_id where applicant_id = $1`, id)
-	for aSpecializations.Next() {
-		var s int
-		if err = aSpecializations.Scan(&s); err != nil {
+	fmt.Printf("3: %v", applicantEducations)
+	var applicantLanguages []models.ApplicantLanguage
+	aLang, err := conn.Query(ctx, `
+		select language_id, language_level from applicant_id_language_id where user_id = $1`, id)
+	for aLang.Next() {
+		var language models.ApplicantLanguage
+		if err = aLang.Scan(&language.Language, &language.Level); err != nil {
 			return nil, err
 		}
-		applicant.Specialization = append(applicant.Specialization, s)
+		applicantLanguages = append(applicantLanguages, language)
+	}
+	fmt.Println("4")
+	var applicantSpecializations []models.ApplicantSpecialization
+	aSpec, err := conn.Query(ctx, `
+		select specialization_id, salary from applicant_id_specialization_id where user_id = $1`, id)
+	for aSpec.Next() {
+		var specialization models.ApplicantSpecialization
+		if err = aSpec.Scan(&specialization.Specialization, &specialization.Salary); err != nil {
+			return nil, err
+		}
+		applicantSpecializations = append(applicantSpecializations, specialization)
+	}
+	fmt.Println("5")
+	var applicantBusyness []int
+	aBus, err := conn.Query(ctx, `
+		select busyness_id from applicant_id_busyness_id where user_id = $1`, id)
+	for aBus.Next() {
+		var busyness int
+		if err = aBus.Scan(&busyness); err != nil {
+			return nil, err
+		}
+		applicantBusyness = append(applicantBusyness, busyness)
+	}
+
+	var applicantSchedule []int
+	aSch, err := conn.Query(ctx, `
+		select schedule_id from applicant_id_schedule_id where user_id = $1`, id)
+	for aSch.Next() {
+		var schedule int
+		if err = aSch.Scan(&schedule); err != nil {
+			return nil, err
+		}
+		applicantSchedule = append(applicantSchedule, schedule)
+	}
+	applicant := models.Applicant{
+		ID:              "",
+		Info:            applicantInfo,
+		Experiences:     applicantExperiences,
+		Educations:      applicantEducations,
+		Languages:       applicantLanguages,
+		Specializations: applicantSpecializations,
+		Busyness:        applicantBusyness,
+		Schedule:        applicantSchedule,
 	}
 	return &applicant, err
 }

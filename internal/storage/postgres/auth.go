@@ -3,9 +3,13 @@ package postgres
 import (
 	"context"
 	"eSearcher/internal/models"
+	"errors"
 	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var LoginError = errors.New("wrong login or password")
 
 type AuthDB struct {
 	pool *pgxpool.Pool
@@ -44,18 +48,11 @@ func (db *AuthDB) GetUser(login, password string) (*models.User, error) {
 	if err = conn.QueryRow(ctx,
 		`SELECT id, role_id FROM users WHERE login = $1 AND password = $2`,
 		login, password).Scan(&id, &role); err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, LoginError
+		}
 		return nil, err
 	}
-
-	//var id int
-	//var roles []int
-	//for rows.Next() {
-	//	var role int
-	//	if err = rows.Scan(&id, &role); err != nil {
-	//		return nil, err
-	//	}
-	//	roles = append(roles, role)
-	//}
 	var user models.User
 	user.ID = id
 	user.Role = role
