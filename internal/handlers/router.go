@@ -50,4 +50,5 @@ func (r *Router) InitRoutes() {
 	r.Router.HandleFunc("/api/response/", r.AddResponse).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/response/", r.ChangeStatus).Methods(http.MethodPatch)
 	r.Router.HandleFunc("/api/response/", r.DeleteResponse).Methods(http.MethodDelete)
+	r.Router.HandleFunc("/api/response/respondents/{vacancyID}", r.GetRespondents).Methods(http.MethodGet)
 }

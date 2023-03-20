@@ -23,12 +23,24 @@ func (a *Applicants) Create(applicant *models.Applicant) error {
 	return nil
 }
 
-func (a *Applicants) Get(id int) (*models.Applicant, error) {
-	applicant, err := a.store.Get(id)
+func (a *Applicants) Get(uid int) (*models.Applicant, error) {
+	applicant, err := a.store.Get(uid)
 	if err != nil {
 		return nil, err
 	}
 	return applicant, nil
+}
+
+func (a *Applicants) GetAll(ids []int) ([]*models.Applicant, error) {
+	var applicants []*models.Applicant
+	for _, id := range ids {
+		applicant, err := a.store.Get(id)
+		if err != nil {
+			return nil, err
+		}
+		applicants = append(applicants, applicant)
+	}
+	return applicants, nil
 }
 
 func (a *Applicants) SearchApplicant(params *models.SearchApplicantParams) ([]*models.Applicant, error) {

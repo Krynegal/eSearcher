@@ -14,6 +14,29 @@ func NewResponsesStore(pool *pgxpool.Pool) *ResponsesDB {
 	return &ResponsesDB{pool: pool}
 }
 
+func (r *ResponsesDB) GetUIDsByVacancyID(vacancyID string) ([]int, error) {
+	ctx := context.Background()
+	conn, err := r.pool.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Release()
+	var UIDs []int
+	rows, err := conn.Query(ctx, `
+		select user_id from responses where vacancy_id = $1`, vacancyID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var uid int
+		if err = rows.Scan(&uid); err != nil {
+			return nil, err
+		}
+		UIDs = append(UIDs, uid)
+	}
+	return UIDs, nil
+}
+
 func (r *ResponsesDB) ChangeStatus(response *models.Response) error {
 	ctx := context.Background()
 	conn, err := r.pool.Acquire(ctx)
@@ -29,7 +52,7 @@ func (r *ResponsesDB) ChangeStatus(response *models.Response) error {
 	return nil
 }
 
-func (r *ResponsesDB) GetUsersVacancyIDs(uid int) ([]string, error) {
+func (r *ResponsesDB) GetVacancyIDsByUID(uid int) ([]string, error) {
 	ctx := context.Background()
 	conn, err := r.pool.Acquire(ctx)
 	if err != nil {

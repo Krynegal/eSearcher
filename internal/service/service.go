@@ -24,6 +24,7 @@ type VacancyService interface {
 type ApplicantsService interface {
 	Create(applicant *models.Applicant) error
 	Get(id int) (*models.Applicant, error)
+	GetAll(ids []int) ([]*models.Applicant, error)
 	SearchApplicant(params *models.SearchApplicantParams) ([]*models.Applicant, error)
 }
 
@@ -32,8 +33,9 @@ type EmployersService interface {
 }
 
 type ResponsesService interface {
+	GetUIDsByVacancyID(vacancyID string) ([]int, error)
 	ChangeStatus(response *models.Response) error
-	GetUsersVacancyIDs(uid int) ([]string, error)
+	GetVacancyIDsByUID(uid int) ([]string, error)
 	Add(response *models.Response) error
 	Delete(response *models.Response) error
 }

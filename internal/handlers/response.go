@@ -3,9 +3,31 @@ package handlers
 import (
 	"eSearcher/internal/models"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 )
+
+func (r *Router) GetRespondents(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	vacancyID := vars["vacancyID"]
+	applicantIDs, err := r.Services.ResponsesService.GetUIDsByVacancyID(vacancyID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	applicants, err := r.Services.ApplicantsService.GetAll(applicantIDs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(applicants)
+	if err != nil {
+		http.Error(w, "cannot marshall data", http.StatusInternalServerError)
+		return
+	}
+	w.Write(res)
+}
 
 func (r *Router) ChangeStatus(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
@@ -33,7 +55,7 @@ func (r *Router) GetMyResponses(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	vacancyIDs, err := r.Services.ResponsesService.GetUsersVacancyIDs(userID)
+	vacancyIDs, err := r.Services.ResponsesService.GetVacancyIDsByUID(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -29,8 +29,9 @@ type EmployerStorage interface {
 }
 
 type ResponsesStorage interface {
+	GetUIDsByVacancyID(vacancyID string) ([]int, error)
 	ChangeStatus(response *models.Response) error
-	GetUsersVacancyIDs(uid int) ([]string, error)
+	GetVacancyIDsByUID(uid int) ([]string, error)
 	Add(response *models.Response) error
 	Delete(response *models.Response) error
 }
