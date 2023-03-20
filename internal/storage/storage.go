@@ -19,13 +19,15 @@ type VacancyStorage interface {
 }
 
 type ApplicantStorage interface {
-	Create(applicant *models.Applicant) (int, error)
+	Create(applicant *models.Applicant) error
 	Get(id int) (*models.Applicant, error)
 	Search(params *models.SearchApplicantParams) ([]int, error)
 }
 
 type EmployerStorage interface {
-	Create(employer *models.Employer) (string, error)
+	Get(id int) (*models.Employer, error)
+	Create(employer *models.Employer) error
+	Update(employer *models.Employer) error
 }
 
 type ResponsesStorage interface {

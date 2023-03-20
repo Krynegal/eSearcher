@@ -29,7 +29,9 @@ type ApplicantsService interface {
 }
 
 type EmployersService interface {
+	Get(id int) (*models.Employer, error)
 	Create(applicant *models.Employer) error
+	Update(applicant *models.Employer) error
 }
 
 type ResponsesService interface {

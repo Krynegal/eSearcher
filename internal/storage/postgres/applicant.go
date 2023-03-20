@@ -18,50 +18,49 @@ func NewApplicantsStore(pool *pgxpool.Pool) *ApplicantsDB {
 	return &ApplicantsDB{pool: pool}
 }
 
-func (a *ApplicantsDB) Create(applicant *models.Applicant) (int, error) {
+func (a *ApplicantsDB) Create(applicant *models.Applicant) error {
 	ctx := context.Background()
 	conn, err := a.pool.Acquire(ctx)
 	if err != nil {
-		return -1, err
+		return err
 	}
 	defer conn.Release()
-	var id int
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO applicant_info (user_id, name, male) VALUES($1, $2, $3)`,
 		applicant.ID, applicant.Info.Name, applicant.Info.Male); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO experience (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO education (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO applicant_id_language_id (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO schedule (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO busyness (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
 	if _, err = conn.Exec(ctx,
 		`INSERT INTO applicant_id_specialization_id (user_id) VALUES($1)`,
 		applicant.ID); err != nil {
-		return -1, err
+		return err
 	}
-	return id, nil
+	return nil
 }
 
 func (a *ApplicantsDB) Update(applicant *models.Applicant) (int, error) {

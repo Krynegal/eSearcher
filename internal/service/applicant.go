@@ -3,7 +3,6 @@ package service
 import (
 	"eSearcher/internal/models"
 	"eSearcher/internal/storage"
-	"fmt"
 )
 
 type Applicants struct {
@@ -15,11 +14,9 @@ func NewApplicants(storage storage.ApplicantStorage) *Applicants {
 }
 
 func (a *Applicants) Create(applicant *models.Applicant) error {
-	id, err := a.store.Create(applicant)
-	if err != nil {
+	if err := a.store.Create(applicant); err != nil {
 		return err
 	}
-	fmt.Printf("applicant id: %v", id)
 	return nil
 }
 
