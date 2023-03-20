@@ -11,7 +11,7 @@ type Vacancy struct {
 	Schedule       []int    `json:"schedule"`
 	Specialization []int    `json:"specialization"`
 	Tags           []string `json:"tags"`
-	Status         bool     `json:"status"`
+	Banned         bool     `json:"banned"`
 }
 
 type SearchVacancyParams struct {
@@ -26,5 +26,5 @@ type SearchVacancyParams struct {
 	Schedule       []int    `json:"schedule"`
 	Specialization []int    `json:"specialization"`
 	Tags           []string `json:"tags"`
-	Status         bool     `json:"status"`
+	Banned         bool     `json:"banned"`
 }

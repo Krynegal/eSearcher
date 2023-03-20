@@ -14,6 +14,7 @@ type OptionsStorage interface {
 type VacancyStorage interface {
 	GetEmployerVacancies(uid int) ([]*models.Vacancy, error)
 	GetByID(id string) (*models.Vacancy, error)
+	Update(vacancy *models.Vacancy) error
 	Create(vacancy *models.Vacancy) (string, error)
 	Search(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }

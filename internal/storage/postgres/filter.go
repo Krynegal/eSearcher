@@ -6,7 +6,11 @@ import (
 
 func FillEmpty(params *models.SearchApplicantParams) {
 	if len(params.Specialization) == 0 {
-		params.Specialization = []int{1, 2, 3, 4, 5}
+		allSpecializationsIDs := make([]int, 0, 20)
+		for i := 1; i <= 20; i++ {
+			allSpecializationsIDs = append(allSpecializationsIDs, i)
+		}
+		params.Specialization = allSpecializationsIDs
 	}
 	if len(params.Schedule) == 0 {
 		params.Schedule = []int{1, 2, 3, 4, 5}

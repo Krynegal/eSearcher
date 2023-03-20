@@ -15,7 +15,7 @@ func applyAllFilters(params *models.SearchVacancyParams) bson.D {
 		containSchedule(params.Schedule),
 		containBusyness(params.Busyness),
 		containSpecialization(params.Specialization),
-		banned(params.Status),
+		banned(params.Banned),
 	}
 }
 
@@ -69,5 +69,5 @@ func containsTags(tags []string) bson.E {
 }
 
 func banned(banned bool) bson.E {
-	return bson.E{Key: "status", Value: banned}
+	return bson.E{Key: "banned", Value: banned}
 }

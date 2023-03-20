@@ -43,6 +43,14 @@ func (v *Vacancies) CreateVacancy(vacancy *models.Vacancy) error {
 	return nil
 }
 
+func (v *Vacancies) UpdateVacancy(vacancy *models.Vacancy) error {
+	err := v.store.Update(vacancy)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *Vacancies) SearchVacancy(params *models.SearchVacancyParams) ([]*models.Vacancy, error) {
 	vacancies, err := v.store.Search(params)
 	if err != nil {

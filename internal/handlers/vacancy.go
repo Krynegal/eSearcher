@@ -27,19 +27,19 @@ func (r *Router) GetMyVacancies(w http.ResponseWriter, req *http.Request) {
 }
 
 func (r *Router) CreateVacancy(w http.ResponseWriter, req *http.Request) {
-	userID, err := r.getUserIDFromToken(w, req)
-	if err != nil {
-		return
-	}
-	userRole, err := r.getUserRoleFromToken(w, req)
-	if err != nil {
-		return
-	}
-	fmt.Printf("userID: %v, userRole: %v", userID, userRole)
-	if userRole != 3 {
-		http.Error(w, "you are not employer", http.StatusInternalServerError)
-		return
-	}
+	//userID, err := r.getUserIDFromToken(w, req)
+	//if err != nil {
+	//	return
+	//}
+	//userRole, err := r.getUserRoleFromToken(w, req)
+	//if err != nil {
+	//	return
+	//}
+	//fmt.Printf("userID: %v, userRole: %v", userID, userRole)
+	//if userRole != 3 {
+	//	http.Error(w, "you are not employer", http.StatusInternalServerError)
+	//	return
+	//}
 
 	defer req.Body.Close()
 	body, err := io.ReadAll(req.Body)
@@ -55,6 +55,41 @@ func (r *Router) CreateVacancy(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Println(vacancy.Tags)
 	if err = r.Services.VacancyService.CreateVacancy(vacancy); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (r *Router) UpdateVacancy(w http.ResponseWriter, req *http.Request) {
+	//userID, err := r.getUserIDFromToken(w, req)
+	//if err != nil {
+	//	return
+	//}
+	//userRole, err := r.getUserRoleFromToken(w, req)
+	//if err != nil {
+	//	return
+	//}
+	//fmt.Printf("userID: %v, userRole: %v", userID, userRole)
+	//if userRole != 3 {
+	//	http.Error(w, "you are not employer", http.StatusInternalServerError)
+	//	return
+	//}
+
+	defer req.Body.Close()
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		http.Error(w, "incorrect input data", http.StatusInternalServerError)
+		return
+	}
+	var vacancy *models.Vacancy
+	err = json.Unmarshal(body, &vacancy)
+	if err != nil {
+		http.Error(w, "cannot unmarshall data", http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("%+v\n", vacancy)
+	if err = r.Services.VacancyService.UpdateVacancy(vacancy); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

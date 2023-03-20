@@ -465,12 +465,12 @@ func (a *ApplicantsDB) Search(params *models.SearchApplicantParams) ([]int, erro
 		return nil, err
 	}
 	rows, err := conn.Query(ctx,
-		`select id from applicants WHERE
-		id IN (select applicant_id from applicant_id_schedule_id WHERE schedule_id = ANY ($1)) 
+		`select user_id from applicant_info WHERE
+		id IN (select user_id from applicant_id_schedule_id WHERE schedule_id = ANY ($1)) 
 		AND
-		id IN (select applicant_id from applicant_id_busyness_id WHERE busyness_id = ANY ($2))
+		id IN (select user_id from applicant_id_busyness_id WHERE busyness_id = ANY ($2))
 		AND
-		id IN (select applicant_id from applicant_id_specialization_id WHERE specialization_id = ANY ($3))
+		id IN (select user_id from applicant_id_specialization_id WHERE specialization_id = ANY ($3))
 		`,
 		schedule, busyness, specialization)
 	if err != nil {

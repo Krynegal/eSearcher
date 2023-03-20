@@ -17,6 +17,7 @@ type OptionsService interface {
 type VacancyService interface {
 	GetEmployerVacancies(uid int) ([]*models.Vacancy, error)
 	GetByIDs(id []string) ([]*models.Vacancy, error)
+	UpdateVacancy(vacancy *models.Vacancy) error
 	CreateVacancy(vacancy *models.Vacancy) error
 	SearchVacancy(params *models.SearchVacancyParams) ([]*models.Vacancy, error)
 }

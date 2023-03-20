@@ -36,6 +36,7 @@ func (r *Router) InitRoutes() {
 	r.Router.HandleFunc("/api/vacancy/", r.CreateVacancy).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/search", r.KeyWordSearchVacancy).Methods(http.MethodPost)
 	r.Router.HandleFunc("/api/vacancy/my", r.GetMyVacancies).Methods(http.MethodGet)
+	r.Router.HandleFunc("/api/vacancy/", r.UpdateVacancy).Methods(http.MethodPatch)
 
 	// Applicant handlers
 	r.Router.HandleFunc("/api/applicant/{id}", r.GetApplicant).Methods(http.MethodGet)
