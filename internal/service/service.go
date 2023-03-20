@@ -24,6 +24,7 @@ type VacancyService interface {
 type ApplicantsService interface {
 	Create(applicant *models.Applicant) error
 	Get(id int) (*models.Applicant, error)
+	Update(applicant *models.Applicant) error
 	GetAll(ids []int) ([]*models.Applicant, error)
 	SearchApplicant(params *models.SearchApplicantParams) ([]*models.Applicant, error)
 }

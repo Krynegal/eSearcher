@@ -20,6 +20,13 @@ func (a *Applicants) Create(applicant *models.Applicant) error {
 	return nil
 }
 
+func (a *Applicants) Update(applicant *models.Applicant) error {
+	if err := a.store.Update(applicant); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (a *Applicants) Get(uid int) (*models.Applicant, error) {
 	applicant, err := a.store.Get(uid)
 	if err != nil {

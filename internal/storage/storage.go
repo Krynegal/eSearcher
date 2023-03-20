@@ -21,6 +21,7 @@ type VacancyStorage interface {
 type ApplicantStorage interface {
 	Create(applicant *models.Applicant) error
 	Get(id int) (*models.Applicant, error)
+	Update(applicant *models.Applicant) error
 	Search(params *models.SearchApplicantParams) ([]int, error)
 }
 
